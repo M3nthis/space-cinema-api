@@ -1,9 +1,9 @@
-package utils
+package services
 
 import (
-	"context"
 	"strings"
 
+	"github.com/M3nthis/space-cinema-api/domain"
 	. "github.com/M3nthis/space-cinema-api/domain"
 	"github.com/chromedp/chromedp"
 )
@@ -34,13 +34,18 @@ func SearchTitles(url, target string) (titles *[]Film, err error) {
 }
 
 func crawl(url, target string) (string, error) {
-	// Create context
-	ctx, cancel := chromedp.NewContext(context.Background())
+	// Ensure the first tab is created
+	if err := chromedp.Run(*domain.Ctx); err != nil {
+		return "", err
+	}
+
+	// Create Tab
+	ctx2, cancel := chromedp.NewContext(*domain.Ctx)
 	defer cancel()
 
 	// Run task
 	var res string
-	err := chromedp.Run(ctx,
+	err := chromedp.Run(ctx2,
 		chromedp.Navigate(url),
 		chromedp.Text(target, &res, chromedp.NodeVisible, chromedp.ByID),
 	)
