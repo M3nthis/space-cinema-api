@@ -1,5 +1,6 @@
 package domain
 
 type Film struct {
-	Nome string `json:"nome"`
+	Nome  string `json:"nome"`
+	Orari string `json:"orari"`
 }
