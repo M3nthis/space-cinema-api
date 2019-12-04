@@ -28,6 +28,8 @@ func SearchTitles(url, target string) (titles *[]Film, err error) {
 			titlesSlice = append(titlesSlice, Film{Nome: el[i+1]})
 		} else if match, err := regexp.Match("[0-2][0-9][:][0-5][0-9]", []byte(text)); err == nil && match {
 			titlesSlice[len(titlesSlice)-1].Orari += fmt.Sprintf("%s ", text)
+		} else if strings.HasPrefix(text, "Durata") {
+			titlesSlice[len(titlesSlice)-1].Durata = text
 		}
 	}
 	titles = &titlesSlice
