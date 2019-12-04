@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/M3nthis/space-cinema-api/domain"
@@ -22,14 +21,12 @@ func SearchTitles(url, target string) (titles *[]Film, err error) {
 	var titlesSlice []Film
 	titlesSlice = append(titlesSlice, Film{Nome: el[0]})
 	for i, text := range el {
-		if text == "Scheda film" && i+1 < len(el) && el[i+1] != "TOP" {
+		if isTitle(text, i, &el) {
 			titlesSlice = append(titlesSlice, Film{Nome: el[i+1]})
-		} else if text == "TOP" && i+1 < len(el) {
-			titlesSlice = append(titlesSlice, Film{Nome: el[i+1]})
-		} else if match, err := regexp.Match("[0-2][0-9][:][0-5][0-9]", []byte(text)); err == nil && match {
+		} else if isHour(text) {
 			titlesSlice[len(titlesSlice)-1].Orari += fmt.Sprintf("%s ", text)
-		} else if strings.HasPrefix(text, "Durata") {
-			titlesSlice[len(titlesSlice)-1].Durata = text
+		} else if isLength(text) {
+			titlesSlice[len(titlesSlice)-1].Durata = formatLength(text)
 		}
 	}
 	titles = &titlesSlice
